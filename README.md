@@ -1,9 +1,5 @@
 # A3-Algoritmos
 
-## como executar
-
-# Meu Projeto Backend
-
 ## Como executar
 
 1. Clone o repositório: `git clone <url_do_repositorio>`
