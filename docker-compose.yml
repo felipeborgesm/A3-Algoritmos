@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  backend:
+    build: ./a3-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  frontend:
+    build: ./a3-frontend
+    ports:
+      - "80:80"
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: nome_do_banco
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
