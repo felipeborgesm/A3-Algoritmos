@@ -4,8 +4,6 @@ services:
     build: ./a3-backend
     ports:
       - "8080:8080"
-    depends_on:
-      - db
   frontend:
     build: ./a3-frontend
     ports:
