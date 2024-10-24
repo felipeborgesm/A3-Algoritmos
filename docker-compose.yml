@@ -8,6 +8,8 @@ services:
     build: ./a3-frontend
     ports:
       - "80:80"
+    volumes:
+      - ./a3-frontend:/usr/share/nginx/html
   db:
     image: postgres:latest
     environment:

@@ -4,13 +4,9 @@ FROM nginx:alpine
 # Crie um diretório para o seu aplicativo
 WORKDIR /usr/share/nginx/html
 
-# Copie os arquivos HTML, CSS e JS para o diretório do Nginx
-COPY ./html/ ./
-COPY ./css/ ./
-COPY ./js/ ./
 
 # Exponha a porta 80 para acesso externo
 EXPOSE 80
 
 # Comando para iniciar o Nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"] 
