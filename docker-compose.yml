@@ -1,9 +1,11 @@
-version: "3.9"
 services:
   backend:
     build: ./a3-backend
     ports:
       - "8080:8080"
+    volumes:
+      - ./a3-backend:/app/src # Mapeia o diretório do projeto para /app no container
+    restart: always
   frontend:
     build: ./a3-frontend
     ports:
