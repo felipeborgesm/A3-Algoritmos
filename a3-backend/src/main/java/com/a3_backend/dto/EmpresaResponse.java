@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -20,16 +21,20 @@ public class EmpresaResponse {
     private String nome;
     private String cnpj;
     private String administrador;
-    private List<Usuario> funcionarios;
-    private List<Produto> produtos;
+    private List<String> funcionarios;
+    private List<String> produtos;
     private String dataCriacao;
     private String dataAtualizacao;
 
     public EmpresaResponse(Empresa empresa) {
         this.nome = empresa.getNome();
         this.cnpj = empresa.getCnpj();
-        this.funcionarios = empresa.getFuncionarios();
-        this.produtos = empresa.getProdutos();
+        this.funcionarios = empresa.getFuncionarios().stream()
+                .map(Usuario::getNome)
+                .collect(Collectors.toList());
+        this.produtos = empresa.getProdutos().stream()
+                .map(Produto::getNome)
+                .collect(Collectors.toList());
         this.dataCriacao = formatarData(empresa.getDataCriacao());
         this.dataAtualizacao = formatarData(empresa.getDataAtualizacao());
         this.administrador = empresa.getAdministrador().getNome();

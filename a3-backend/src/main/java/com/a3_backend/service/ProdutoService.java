@@ -7,8 +7,7 @@ import com.a3_backend.dto.ProdutoResponse;
 import java.util.List;
 
 public interface ProdutoService {
-    ProdutoResponse getById(Long id);
+    ProdutoResponse getByCodigo(Integer id);
     List<ProdutoResponse> getAllByEmpresaId(Long empresaId);
-    CreateEntityResponse create(CreateProdutoRequest produtoRequest, Long empresaId);
-
+    void addProduto(CreateProdutoRequest produtoRequest, Long empresaId);
 }

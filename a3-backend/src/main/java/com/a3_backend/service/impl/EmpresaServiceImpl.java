@@ -1,7 +1,6 @@
 package com.a3_backend.service.impl;
 
-import com.a3_backend.TAD.ListaEncadeada;
-import java.util.stream.Collectors;
+import com.a3_backend.dto.AddFuncionariosRequest;
 import com.a3_backend.dto.CreateEmpresaRequest;
 import com.a3_backend.dto.CreateEntityResponse;
 import com.a3_backend.dto.EmpresaResponse;
@@ -12,6 +11,7 @@ import com.a3_backend.repository.UsuarioRepository;
 import com.a3_backend.service.EmpresaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +25,7 @@ public class EmpresaServiceImpl implements EmpresaService {
 
     @Override
     public EmpresaResponse getById(Long id) {
-        Empresa empresa = empresaRepository.findByIdWithFuncionarios(id).orElseThrow();
-        System.out.println(empresa);
+        Empresa empresa = empresaRepository.findById(id).orElseThrow();
         return new EmpresaResponse(empresa);
     }
 
@@ -38,32 +37,28 @@ public class EmpresaServiceImpl implements EmpresaService {
                 .orElseThrow(() -> new RuntimeException("Administrador não encontrado"));
         empresa.setAdministrador(administrador);
 
-        // Primeiro salvamos a empresa
         empresa = empresaRepository.save(empresa);
 
-        System.out.println(empresa);
+        administrador.setEmpresa(empresa);
+        usuarioRepository.save(administrador);
+        return new CreateEntityResponse(empresa);
+    }
 
-        // Depois adicionamos os funcionários
+    @Override
+    public EmpresaResponse addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId) {
+        Empresa empresa = empresaRepository.findById(empresaId).orElseThrow();
+
         List<Usuario> funcionarios = new ArrayList<>();
-        for (Long usuarioId : empresaRequest.getFuncionariosIds()) {
+        for (Long usuarioId : funcionariosId.getFuncionariosId()) {
             Usuario funcionario = usuarioRepository.findById(usuarioId)
                     .orElseThrow(() -> new RuntimeException("Funcionário não encontrado com ID: " + usuarioId));
-
             funcionario.setEmpresa(empresa);
+            usuarioRepository.save(funcionario);
             funcionarios.add(funcionario);
-            usuarioRepository.save(funcionario); // Salva a atualização do funcionário
         }
+        empresa.getFuncionarios().addAll(funcionarios);
+        empresaRepository.save(empresa);
 
-        //ADD OS USUARIOS DEPOIS DE CRIAR A EMPRESA PQ TA BUGANDO ESSA MERDA TODA
-        System.out.println(funcionarios);
-
-        empresa.setFuncionarios(funcionarios);
-
-        System.out.println("Funcionários após salvar: " + empresa);
-
-        empresa = empresaRepository.save(empresa); // Salva a empresa novamente com os funcionários
-
-
-        return new CreateEntityResponse(empresa);
+        return new EmpresaResponse(empresa);
     }
 }

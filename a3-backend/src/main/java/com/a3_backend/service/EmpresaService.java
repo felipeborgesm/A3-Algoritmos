@@ -1,10 +1,11 @@
 package com.a3_backend.service;
 
-import com.a3_backend.dto.CreateEmpresaRequest;
-import com.a3_backend.dto.CreateEntityResponse;
-import com.a3_backend.dto.EmpresaResponse;
+import com.a3_backend.dto.*;
+
+import java.util.List;
 
 public interface EmpresaService {
     EmpresaResponse getById(Long id);
     CreateEntityResponse create(CreateEmpresaRequest empresaRequest, Long id);
+    EmpresaResponse addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId);
 }

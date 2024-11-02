@@ -10,5 +10,4 @@ import java.util.List;
 public class CreateEmpresaRequest {
     private String nome;
     private String cnpj;
-    private List<Long> funcionariosIds;
 }

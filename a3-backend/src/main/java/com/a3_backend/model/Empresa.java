@@ -48,10 +48,6 @@ public class Empresa {
     @JoinColumn(name = "administrador_id", referencedColumnName = "id", unique = true)
     private Usuario administrador;
 
-//    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL)
-//    @CollectionType(type = ListaEncadeadaType.class)
-//    private ListaEncadeada<Usuario> funcionarios;
-
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Usuario> funcionarios = new ArrayList<>();
@@ -65,3 +61,8 @@ public class Empresa {
         this.cnpj = empresaRequest.getCnpj();
     };
 }
+
+
+//    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL)
+//    @CollectionType(type = ListaEncadeadaType.class)
+//    private ListaEncadeada<Usuario> funcionarios;

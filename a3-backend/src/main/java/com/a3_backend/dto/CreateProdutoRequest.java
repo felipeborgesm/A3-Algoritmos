@@ -10,4 +10,5 @@ import java.math.BigDecimal;
 public class CreateProdutoRequest {
     private String nome;
     private BigDecimal valor_unitario;
+    private Boolean is_perecivel;
 }

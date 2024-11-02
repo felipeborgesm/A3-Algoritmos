@@ -33,6 +33,9 @@ public class Produto {
     @Column(name = "quantidade", nullable = false)
     private Integer quantidade;
 
+    @Column(name = "is_perecivel", nullable = false)
+    private Boolean is_perecivel;
+
     @Column(name = "valor_unitario", nullable = false)
     private BigDecimal valor_unitario;
 

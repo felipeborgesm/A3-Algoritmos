@@ -22,8 +22,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     EmpresaRepository empresaRepository;
 
     @Override
-    public ProdutoResponse getById(Long id) {
-        Produto produto = produtoRepository.findById(id).orElseThrow();
+    public ProdutoResponse getByCodigo(Integer codigo) {
+        Produto produto = produtoRepository.findByCodigo(codigo);
         return new ProdutoResponse(produto);
     }
 
@@ -33,7 +33,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public CreateEntityResponse create(CreateProdutoRequest produtoRequest, Long empresaId) {
+    public void addProduto(CreateProdutoRequest produtoRequest, Long empresaId) {
         Produto produto = new Produto(produtoRequest);
 
         var empresa = empresaRepository.findById(empresaId).orElseThrow();
@@ -42,7 +42,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         produto.setEmpresa(empresa);
         produtoRepository.save(produto);
 
-        return new CreateEntityResponse(produto);
+        return;
     }
     private Integer gerarNumeroUnico() {
         Random random = new Random();

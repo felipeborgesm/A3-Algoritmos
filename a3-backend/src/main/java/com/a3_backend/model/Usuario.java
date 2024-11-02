@@ -48,4 +48,5 @@ public class Usuario {
         this.nome = usuarioRequest.getNome();
         this.login = usuarioRequest.getLogin();
         this.senha = usuarioRequest.getSenha();
-    }}
+    }
+}
