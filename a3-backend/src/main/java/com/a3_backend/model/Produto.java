@@ -11,6 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.Queue;
 
 @Table(name = "produto")
 @Entity
@@ -33,14 +35,14 @@ public class Produto {
     @Column(name = "quantidade", nullable = false)
     private Integer quantidade;
 
-    @Column(name = "is_perecivel", nullable = false)
-    private Boolean is_perecivel;
+    @Column(name = "isProductInEstoque", nullable = false)
+    private Boolean isProductInEstoque;
 
-    @Column(name = "valor_unitario", nullable = false)
-    private BigDecimal valor_unitario;
+    @Column(name = "isPerecivel", nullable = false)
+    private Boolean isPerecivel;
 
-    @Column(name = "valor_total", nullable = false)
-    private BigDecimal valor_total;
+    @Column(name = "valorUnitario", nullable = false)
+    private BigDecimal valorUnitario;
 
     @Column(name = "dataCriacao")
     @CreatedDate
@@ -54,8 +56,12 @@ public class Produto {
     @JoinColumn(name = "empresa_id", referencedColumnName = "id")
     private Empresa empresa;
 
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Queue<Pedido> pedidosToEstoque = new LinkedList<>();
+
     public Produto (CreateProdutoRequest produtoRequest) {
         this.nome = produtoRequest.getNome();
-        this.valor_unitario = produtoRequest.getValor_unitario();
+        this.valorUnitario = produtoRequest.getValorUnitario();
+        this.isPerecivel = produtoRequest.getIsPerecivel();
     }
 }

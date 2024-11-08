@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/empresa")
 public class EmpresaController {
@@ -32,12 +34,16 @@ public class EmpresaController {
 
     @PutMapping("/funcionarios/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public EmpresaResponse addFuncionarios(@PathVariable Long id, @RequestBody AddFuncionariosRequest funcionariosId) { return empresaService.addFuncionarios(funcionariosId, id); }
+    public void addFuncionarios(@PathVariable Long id, @RequestBody AddFuncionariosRequest funcionariosId) { empresaService.addFuncionarios(funcionariosId, id); }
 
     @PutMapping("/produto/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addProduto(@PathVariable Long id, @RequestBody CreateProdutoRequest produtoRequest) { produtoService.addProduto(produtoRequest, id); }
+    public void addProduto(@PathVariable Long id, @RequestBody CreateProdutoRequest produtoRequest) { produtoService.create(produtoRequest, id); }
 
-
+    @GetMapping("/produtos/{id}")
+    @Operation(summary = "Retorna os dados do usuário de acordo o Id", description = "Retorna os dados do usuário")
+    public List<AllProductsResponse> getAllProdutos(@PathVariable Long id) {
+        return produtoService.getAllByEmpresaId(id);
+    }
 
 }

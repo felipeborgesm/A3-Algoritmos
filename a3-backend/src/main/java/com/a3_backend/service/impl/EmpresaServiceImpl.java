@@ -45,7 +45,7 @@ public class EmpresaServiceImpl implements EmpresaService {
     }
 
     @Override
-    public EmpresaResponse addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId) {
+    public void addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId) {
         Empresa empresa = empresaRepository.findById(empresaId).orElseThrow();
 
         List<Usuario> funcionarios = new ArrayList<>();
@@ -58,7 +58,5 @@ public class EmpresaServiceImpl implements EmpresaService {
         }
         empresa.getFuncionarios().addAll(funcionarios);
         empresaRepository.save(empresa);
-
-        return new EmpresaResponse(empresa);
     }
 }

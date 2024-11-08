@@ -16,8 +16,9 @@ import java.time.format.DateTimeFormatter;
 public class ProdutoResponse {
     private Integer codigo;
     private String nome;
-    private BigDecimal valor_unitario;
-    private Boolean is_perecivel;
+    private BigDecimal valorUnitario;
+    private Boolean isPerecivel;
+    private Boolean isProductInEstoque;
     private String empresa;
     private String dataCriacao;
     private String dataAtualizacao;
@@ -25,8 +26,9 @@ public class ProdutoResponse {
     public ProdutoResponse(Produto produto) {
         this.codigo = produto.getCodigo();
         this.nome = produto.getNome();
-        this.is_perecivel = produto.getIs_perecivel();
-        this.valor_unitario = produto.getValor_unitario();
+        this.isPerecivel = produto.getIsPerecivel();
+        this.isProductInEstoque = produto.getIsProductInEstoque();
+        this.valorUnitario = produto.getValorUnitario();
         this.empresa = produto.getEmpresa().getNome();
         this.dataCriacao = formatarData(produto.getDataCriacao());
         this.dataAtualizacao = formatarData(produto.getDataAtualizacao());
