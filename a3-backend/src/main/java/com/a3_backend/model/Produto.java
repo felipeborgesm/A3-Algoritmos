@@ -11,8 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "produto")
 @Entity
@@ -57,11 +57,13 @@ public class Produto {
     private Empresa empresa;
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Queue<Pedido> pedidosToEstoque = new LinkedList<>();
+    private List<Pedido> pedidosToEstoque = new ArrayList<>();
 
     public Produto (CreateProdutoRequest produtoRequest) {
         this.nome = produtoRequest.getNome();
+        this.quantidade = produtoRequest.getQuantidade();
         this.valorUnitario = produtoRequest.getValorUnitario();
         this.isPerecivel = produtoRequest.getIsPerecivel();
+        this.pedidosToEstoque = new ArrayList<>();
     }
 }

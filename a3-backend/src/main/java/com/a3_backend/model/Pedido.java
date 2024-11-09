@@ -6,8 +6,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Table(name = "pedido")
 @Entity
@@ -34,9 +37,18 @@ public class Pedido {
     @Column(name = "isPedidoFinalizado")
     private Boolean isPedidoFinalizado;
 
+    @Column(name = "dataCriacao")
+    @CreatedDate
+    private LocalDateTime dataCriacao;
+
+    @Column(name = "dataAtualizacao")
+    @LastModifiedDate
+    private LocalDateTime dataAtualizacao;
+
     public Pedido (CreatePedidoRequest pedidoRequest) {
         this.produto = pedidoRequest.getProduto();
         this.valorTotal = pedidoRequest.getValorTotal();
         this.quantidade = pedidoRequest.getQuantidade();
+        this.isPedidoFinalizado = pedidoRequest.getIsPedidoFinalizado();
     }
 }

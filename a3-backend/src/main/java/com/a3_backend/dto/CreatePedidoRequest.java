@@ -12,4 +12,5 @@ public class CreatePedidoRequest {
     private Produto produto;
     private BigDecimal valorTotal;
     private Integer quantidade;
+    private Boolean isPedidoFinalizado;
 }

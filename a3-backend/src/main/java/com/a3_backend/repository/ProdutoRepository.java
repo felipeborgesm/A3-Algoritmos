@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
-    Produto findByCodigo (Integer codigo);
+    Produto getByCodigo (Integer codigo);
     List<Produto> getAllByEmpresaId (Long empresaId);
 }

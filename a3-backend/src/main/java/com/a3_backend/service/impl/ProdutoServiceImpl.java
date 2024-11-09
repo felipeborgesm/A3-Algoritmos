@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -26,7 +27,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public ProdutoResponse getByCodigo(Integer codigo) {
-        Produto produto = produtoRepository.findByCodigo(codigo);
+        Produto produto = produtoRepository.getByCodigo(codigo);
         return new ProdutoResponse(produto);
     }
 
@@ -58,29 +59,43 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
-        Produto produto = produtoRepository.findByCodigo(tradeProdutoRequest.getCodigo());
+        Produto produto = produtoRepository.getByCodigo(tradeProdutoRequest.getCodigo());
+        if (produto == null) {
+            throw new RuntimeException("Produto não encontrado");
+        }
+        CreatePedidoRequest createPedidoRequest = new CreatePedidoRequest();
 
-        if (produto.getQuantidade().compareTo(tradeProdutoRequest.getQuantidade()) < 0) {
-            CreatePedidoRequest createPedidoRequest = new CreatePedidoRequest();
+        if (produto.getQuantidade() + tradeProdutoRequest.getQuantidade() <= 0) {
+            int quantidadeReposicao = calcularQuantidadeReposicao(produto, tradeProdutoRequest.getQuantidade());
+
             createPedidoRequest.setProduto(produto);
-            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(produto.getQuantidade())));
-            createPedidoRequest.setQuantidade(produto.getQuantidade());
+            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
+            createPedidoRequest.setQuantidade(quantidadeReposicao);
+            createPedidoRequest.setIsPedidoFinalizado(false);
 
-            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest); // Salva o pedido e o retorna
-            produto.getPedidosToEstoque().offer(pedido); // Adiciona o pedido à fila
+            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest);
+            produto.getPedidosToEstoque().add(pedido);
+            produto.setIsProductInEstoque(false);
+
         } else {
-            produto.setQuantidade(produto.getQuantidade() - tradeProdutoRequest.getQuantidade()); // Subtrai a quantidade
+            produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
 
+            createPedidoRequest.setProduto(produto);
+            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
+            createPedidoRequest.setQuantidade(tradeProdutoRequest.getQuantidade());
+            createPedidoRequest.setIsPedidoFinalizado(true);
+
+            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest);
             if (produto.getQuantidade() <= 0) {
                 produto.setIsProductInEstoque(false);
             }
         }
     }
 
-
-
-
-
+    private int calcularQuantidadeReposicao(Produto produto, int quantidadeVendida) {
+        int quantidadeMinimaDesejada = 10;
+        return quantidadeMinimaDesejada + quantidadeVendida + produto.getQuantidade();
+    }
 
     private Integer gerarNumeroUnico() {
         Random random = new Random();
@@ -94,6 +109,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     private boolean numeroEhUnico(Integer codigo) {
-        return produtoRepository.findByCodigo(codigo) == null;
+        return produtoRepository.getByCodigo(codigo) == null;
     }
 }

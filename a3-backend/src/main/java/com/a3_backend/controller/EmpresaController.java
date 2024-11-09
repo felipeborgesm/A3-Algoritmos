@@ -1,7 +1,9 @@
 package com.a3_backend.controller;
 
 import com.a3_backend.dto.*;
+import com.a3_backend.model.Pedido;
 import com.a3_backend.service.EmpresaService;
+import com.a3_backend.service.PedidoService;
 import com.a3_backend.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class EmpresaController {
 
     @Autowired
     ProdutoService produtoService;
+
+    @Autowired
+    PedidoService pedidoService;
 
     @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -45,5 +50,22 @@ public class EmpresaController {
     public List<AllProductsResponse> getAllProdutos(@PathVariable Long id) {
         return produtoService.getAllByEmpresaId(id);
     }
+
+    @PutMapping("/produto/pedido/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void compraVendaProduto(@PathVariable Long id, @RequestBody TradeProdutoRequest tradeRequest) { produtoService.tradeProduto(tradeRequest, id); }
+
+    @GetMapping("/produto/pedidos/{codigo}")
+    @Operation(summary = "Retorna os dados do usuário de acordo o Id", description = "Retorna os dados do usuário")
+    public List<PedidoResponse> getAllProdutoPedidos(@PathVariable Integer codigo) {
+        return pedidoService.getAllByProdutoCodigo(codigo);
+    }
+
+    @GetMapping("/pedidos/{id}")
+    @Operation(summary = "Retorna os dados do usuário de acordo o Id", description = "Retorna os dados do usuário")
+    public List<PedidoResponse> getAllPedidos(@PathVariable Long id) {
+        return pedidoService.getAllByEmpresaId(id);
+    }
+
 
 }
