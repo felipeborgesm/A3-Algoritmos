@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
@@ -65,7 +62,29 @@ public class ProdutoServiceImpl implements ProdutoService {
         }
         CreatePedidoRequest createPedidoRequest = new CreatePedidoRequest();
 
-        if (produto.getQuantidade() + tradeProdutoRequest.getQuantidade() <= 0) {
+        if (produto.getQuantidade() <= 0 && tradeProdutoRequest.getQuantidade() > 0) {
+            // Adiciona a quantidade ao estoque
+            produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
+
+            // Tenta atender o primeiro pedido da fila
+            if (!produto.getPedidosToEstoque().isEmpty()) {
+                Queue<Pedido> pedidosFila = new LinkedList<>(produto.getPedidosToEstoque());
+                Pedido primeiroPedido = pedidosFila.peek(); // Espia o primeiro pedido
+
+                if (primeiroPedido != null && primeiroPedido.getQuantidade() <= produto.getQuantidade()) {
+                    produto.setQuantidade(produto.getQuantidade() - primeiroPedido.getQuantidade());
+                    produto.getPedidosToEstoque().remove(primeiroPedido); // Remove o pedido da fila
+                    primeiroPedido.setIsPedidoFinalizado(true); // Marca o pedido como finalizado
+                    pedidoServiceImpl.save(primeiroPedido); // Atualiza o pedido no repositório
+                }
+            }
+
+            // Verifica se o produto está em estoque após atender o pedido
+            if (produto.getQuantidade() > 0) {
+                produto.setIsProductInEstoque(true);
+            }
+        }
+        else if (produto.getQuantidade() + tradeProdutoRequest.getQuantidade() <= 0) {
             int quantidadeReposicao = calcularQuantidadeReposicao(produto, tradeProdutoRequest.getQuantidade());
 
             createPedidoRequest.setProduto(produto);

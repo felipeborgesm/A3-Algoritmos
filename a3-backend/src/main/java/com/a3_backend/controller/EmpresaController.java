@@ -56,15 +56,21 @@ public class EmpresaController {
     public void compraVendaProduto(@PathVariable Long id, @RequestBody TradeProdutoRequest tradeRequest) { produtoService.tradeProduto(tradeRequest, id); }
 
     @GetMapping("/produto/pedidos/{codigo}")
-    @Operation(summary = "Retorna os dados do usuário de acordo o Id", description = "Retorna os dados do usuário")
+    @Operation(summary = "Retorna todos os pedidos pelo Codigo do produto", description = "Retorna todos os pedidos")
     public List<PedidoResponse> getAllProdutoPedidos(@PathVariable Integer codigo) {
         return pedidoService.getAllByProdutoCodigo(codigo);
     }
 
     @GetMapping("/pedidos/{id}")
-    @Operation(summary = "Retorna os dados do usuário de acordo o Id", description = "Retorna os dados do usuário")
+    @Operation(summary = "Retorna todos os pedidos da empresa pelo Id da empresa", description = "Retorna todos os pedidos")
     public List<PedidoResponse> getAllPedidos(@PathVariable Long id) {
         return pedidoService.getAllByEmpresaId(id);
+    }
+
+    @GetMapping("/produto/mais-vendidos/{id}")
+    @Operation(summary = "Retorna os produtos mais vendidos pela Id da empresa", description = "Retorna todos os pedidos")
+    public List<ProdutoMaisVendidoResponse> getProdutoMaisVendido(@PathVariable Long id) {
+        return pedidoService.getProdutosMaisVendidos(id);
     }
 
 
