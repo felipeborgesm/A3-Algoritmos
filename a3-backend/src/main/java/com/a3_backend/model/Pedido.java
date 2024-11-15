@@ -1,6 +1,7 @@
 package com.a3_backend.model;
 
 import com.a3_backend.dto.CreatePedidoRequest;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -24,10 +25,6 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "produto_id", referencedColumnName = "id")
-    private Produto produto;
-
     @Column(name = "quantidade")
     private Integer quantidade;
 
@@ -45,8 +42,12 @@ public class Pedido {
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "produto_id", referencedColumnName = "id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Produto produto;
+
     public Pedido (CreatePedidoRequest pedidoRequest) {
-        this.produto = pedidoRequest.getProduto();
         this.valorTotal = pedidoRequest.getValorTotal();
         this.quantidade = pedidoRequest.getQuantidade();
         this.isPedidoFinalizado = pedidoRequest.getIsPedidoFinalizado();

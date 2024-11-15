@@ -1,15 +1,14 @@
 package com.a3_backend.service.impl;
 
 import com.a3_backend.dto.*;
-import com.a3_backend.model.Empresa;
 import com.a3_backend.model.Pedido;
 import com.a3_backend.model.Produto;
 import com.a3_backend.repository.EmpresaRepository;
+import com.a3_backend.repository.PedidoRepository;
 import com.a3_backend.repository.ProdutoRepository;
 import com.a3_backend.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -21,6 +20,71 @@ public class ProdutoServiceImpl implements ProdutoService {
     EmpresaRepository empresaRepository;
     @Autowired
     PedidoServiceImpl pedidoServiceImpl;
+    @Autowired
+    PedidoRepository pedidoRepository;
+
+    final Queue<Pedido> filaPedidos = new LinkedList<>();
+
+    @Override
+    public void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
+        Produto produto = produtoRepository.getByCodigo(tradeProdutoRequest.getCodigo());
+        if (produto == null) {
+            throw new RuntimeException("Produto não encontrado");
+        }
+        CreatePedidoRequest createPedidoRequest = new CreatePedidoRequest();
+
+        if (produto.getQuantidade() == 10 && tradeProdutoRequest.getQuantidade() > 0) {
+            produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
+
+            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
+            createPedidoRequest.setQuantidade(tradeProdutoRequest.getQuantidade());
+            createPedidoRequest.setIsPedidoFinalizado(true);
+
+            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest, produto);
+
+            if (!filaPedidos.isEmpty()) {
+                Pedido primeiroPedido = filaPedidos.peek();
+
+                if (primeiroPedido != null && primeiroPedido.getQuantidade() <= produto.getQuantidade()) {
+                    produto.setQuantidade(produto.getQuantidade() + primeiroPedido.getQuantidade());
+
+                    CreatePedidoRequest createPedidoRequest2 = new CreatePedidoRequest();
+
+                    createPedidoRequest2.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(primeiroPedido.getQuantidade())));
+                    createPedidoRequest2.setQuantidade(primeiroPedido.getQuantidade());
+                    createPedidoRequest2.setIsPedidoFinalizado(true);
+
+                    Pedido pedido2 = pedidoServiceImpl.create(createPedidoRequest2, produto);
+
+                    filaPedidos.poll();
+                }
+            }
+            if (produto.getQuantidade() > 0) {
+                produto.setIsProductInEstoque(true);
+            }
+        }
+        else if (produto.getQuantidade() + tradeProdutoRequest.getQuantidade() < 10) {
+            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
+            createPedidoRequest.setQuantidade(tradeProdutoRequest.getQuantidade());
+            createPedidoRequest.setIsPedidoFinalizado(false);
+
+            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest, produto);
+            filaPedidos.offer(pedido);
+            produto.setIsProductInEstoque(false);
+
+        } else {
+            produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
+
+            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
+            createPedidoRequest.setQuantidade(tradeProdutoRequest.getQuantidade());
+            createPedidoRequest.setIsPedidoFinalizado(true);
+
+            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest, produto);
+            if (produto.getQuantidade() <= 0) {
+                produto.setIsProductInEstoque(false);
+            }
+        }
+    }
 
     @Override
     public ProdutoResponse getByCodigo(Integer codigo) {
@@ -33,7 +97,6 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<Produto> produtos = produtoRepository.getAllByEmpresaId(empresaId);
 
         List<AllProductsResponse> formattedProdutos = new ArrayList<>();
-
         produtos.forEach(item -> formattedProdutos.add(new AllProductsResponse(item)));
 
         return formattedProdutos;
@@ -42,7 +105,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public void create(CreateProdutoRequest produtoRequest, Long empresaId) {
         Produto produto = new Produto(produtoRequest);
-
         var empresa = empresaRepository.findById(empresaId).orElseThrow();
 
         produto.setCodigo(gerarNumeroUnico());
@@ -55,66 +117,17 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
-        Produto produto = produtoRepository.getByCodigo(tradeProdutoRequest.getCodigo());
-        if (produto == null) {
-            throw new RuntimeException("Produto não encontrado");
-        }
-        CreatePedidoRequest createPedidoRequest = new CreatePedidoRequest();
+    public List<PedidoResponse> getAllEstoquesByEmpresaId(Long empresaId) {
+        List<PedidoResponse> formattedProdutos = new ArrayList<>();
 
-        if (produto.getQuantidade() <= 0 && tradeProdutoRequest.getQuantidade() > 0) {
-            // Adiciona a quantidade ao estoque
-            produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
-
-            // Tenta atender o primeiro pedido da fila
-            if (!produto.getPedidosToEstoque().isEmpty()) {
-                Queue<Pedido> pedidosFila = new LinkedList<>(produto.getPedidosToEstoque());
-                Pedido primeiroPedido = pedidosFila.peek(); // Espia o primeiro pedido
-
-                if (primeiroPedido != null && primeiroPedido.getQuantidade() <= produto.getQuantidade()) {
-                    produto.setQuantidade(produto.getQuantidade() - primeiroPedido.getQuantidade());
-                    produto.getPedidosToEstoque().remove(primeiroPedido); // Remove o pedido da fila
-                    primeiroPedido.setIsPedidoFinalizado(true); // Marca o pedido como finalizado
-                    pedidoServiceImpl.save(primeiroPedido); // Atualiza o pedido no repositório
-                }
-            }
-
-            // Verifica se o produto está em estoque após atender o pedido
-            if (produto.getQuantidade() > 0) {
-                produto.setIsProductInEstoque(true);
+        for (Pedido pedido : filaPedidos) {
+            if (Objects.equals(pedido.getProduto().getEmpresa().getId(), empresaId)) {
+                formattedProdutos.add(new PedidoResponse(pedido));
             }
         }
-        else if (produto.getQuantidade() + tradeProdutoRequest.getQuantidade() <= 0) {
-            int quantidadeReposicao = calcularQuantidadeReposicao(produto, tradeProdutoRequest.getQuantidade());
-
-            createPedidoRequest.setProduto(produto);
-            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
-            createPedidoRequest.setQuantidade(quantidadeReposicao);
-            createPedidoRequest.setIsPedidoFinalizado(false);
-
-            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest);
-            produto.getPedidosToEstoque().add(pedido);
-            produto.setIsProductInEstoque(false);
-
-        } else {
-            produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
-
-            createPedidoRequest.setProduto(produto);
-            createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
-            createPedidoRequest.setQuantidade(tradeProdutoRequest.getQuantidade());
-            createPedidoRequest.setIsPedidoFinalizado(true);
-
-            Pedido pedido = pedidoServiceImpl.create(createPedidoRequest);
-            if (produto.getQuantidade() <= 0) {
-                produto.setIsProductInEstoque(false);
-            }
-        }
+        return formattedProdutos;
     }
 
-    private int calcularQuantidadeReposicao(Produto produto, int quantidadeVendida) {
-        int quantidadeMinimaDesejada = 10;
-        return quantidadeMinimaDesejada + quantidadeVendida + produto.getQuantidade();
-    }
 
     private Integer gerarNumeroUnico() {
         Random random = new Random();

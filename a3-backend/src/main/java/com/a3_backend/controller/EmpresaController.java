@@ -73,5 +73,9 @@ public class EmpresaController {
         return pedidoService.getProdutosMaisVendidos(id);
     }
 
-
+    @GetMapping("/produto/pedidos-estoque/{id}")
+    @Operation(summary = "Retorna os produtos mais vendidos pela Id da empresa", description = "Retorna todos os pedidos")
+    public  List<PedidoResponse> getAllEstoquesByEmpresaId(@PathVariable Long id) {
+        return produtoService.getAllEstoquesByEmpresaId(id);
+    }
 }

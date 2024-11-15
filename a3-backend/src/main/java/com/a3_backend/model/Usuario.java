@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Table(name = "usuario")
 @Entity
@@ -40,8 +41,9 @@ public class Usuario {
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "empresa_id", referencedColumnName = "id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Empresa empresa;
 
     public Usuario(CreateUsuarioRequest usuarioRequest) {

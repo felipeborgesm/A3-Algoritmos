@@ -22,8 +22,9 @@ public class PedidoServiceImpl implements PedidoService {
     PedidoRepository pedidoRepository;
 
     @Override
-    public Pedido create(CreatePedidoRequest createPedidoRequest) {
+    public Pedido create(CreatePedidoRequest createPedidoRequest, Produto produto) {
         Pedido pedido = new Pedido(createPedidoRequest);
+        pedido.setProduto(produto);
 
         pedidoRepository.save(pedido);
         return pedido;

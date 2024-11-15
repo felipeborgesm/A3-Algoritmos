@@ -4,6 +4,7 @@ package com.a3_backend.model;
 //import com.a3_backend.TAD.ListaEncadeadaType;
 //import org.hibernate.annotations.CollectionType;
 import com.a3_backend.dto.CreateEmpresaRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -46,15 +47,16 @@ public class Empresa {
 
     @ManyToOne
     @JoinColumn(name = "administrador_id", referencedColumnName = "id", unique = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Usuario administrador;
 
-    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Usuario> funcionarios = new ArrayList<>();
+    private List<Usuario> funcionarios;
 
-    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Produto> produtos = new ArrayList<>();
+    private List<Produto> produtos;
 
     public Empresa(CreateEmpresaRequest empresaRequest) {
         this.nome = empresaRequest.getNome();
