@@ -1,6 +1,5 @@
 package com.a3_backend.dto;
 
-import com.a3_backend.TAD.ListaEncadeada;
 import com.a3_backend.model.Empresa;
 import com.a3_backend.model.Produto;
 import com.a3_backend.model.Usuario;
@@ -10,7 +9,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

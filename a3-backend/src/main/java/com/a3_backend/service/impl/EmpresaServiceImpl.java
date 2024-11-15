@@ -11,7 +11,6 @@ import com.a3_backend.repository.UsuarioRepository;
 import com.a3_backend.service.EmpresaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 

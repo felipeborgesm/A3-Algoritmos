@@ -1,5 +1,6 @@
 package com.a3_backend.service.impl;
 
+import com.a3_backend.TAD.TADListaEncadeada;
 import com.a3_backend.dto.CreatePedidoRequest;
 import com.a3_backend.dto.PedidoResponse;
 import com.a3_backend.dto.ProdutoMaisVendidoResponse;
@@ -9,12 +10,8 @@ import com.a3_backend.repository.PedidoRepository;
 import com.a3_backend.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PedidoServiceImpl implements PedidoService {
@@ -51,11 +48,15 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public List<ProdutoMaisVendidoResponse> getProdutosMaisVendidos(Long empresaId) {
+    public TADListaEncadeada<ProdutoMaisVendidoResponse> getProdutosMaisVendidos(Long empresaId) {
         List<Pedido> dadosPedidos = pedidoRepository.getAllByEmpresaId(empresaId);
 
         List<PedidoResponse> listaPedidos = new ArrayList<>();
-        dadosPedidos.forEach(item -> listaPedidos.add(new PedidoResponse(item)));
+        for (Pedido pedido : dadosPedidos) {
+            if (pedido.getQuantidade() <= 0 && pedido.getIsPedidoFinalizado()) {
+                listaPedidos.add(new PedidoResponse(pedido));
+            }
+        }
 
         class ProdutoResumo {
             Integer quantidade = 0;
@@ -71,22 +72,14 @@ public class PedidoServiceImpl implements PedidoService {
             resumo.valorTotal = resumo.valorTotal.add(pedido.getValorTotal());
         }
 
-        List<ProdutoMaisVendidoResponse> resultado = new ArrayList<>();
+        TADListaEncadeada<ProdutoMaisVendidoResponse> resultado = new TADListaEncadeada<>();
         for (Map.Entry<String, ProdutoResumo> entry : mapaProdutos.entrySet()) {
             String produto = entry.getKey();
             ProdutoResumo resumo = entry.getValue();
 
             resultado.add(new ProdutoMaisVendidoResponse(produto, resumo.quantidade, resumo.valorTotal));
         }
-
-        resultado.sort((a, b) -> {
-            int compareQuantidade = a.getQuantidadeTotal().compareTo(b.getQuantidadeTotal());
-            if (compareQuantidade != 0) {
-                return compareQuantidade;
-            } else {
-                return a.getValorTotal().compareTo(b.getValorTotal());
-            }
-        });
+        resultado.sort();
 
         return resultado;
     }

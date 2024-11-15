@@ -1,7 +1,7 @@
 package com.a3_backend.controller;
 
+import com.a3_backend.TAD.TADListaEncadeada;
 import com.a3_backend.dto.*;
-import com.a3_backend.model.Pedido;
 import com.a3_backend.service.EmpresaService;
 import com.a3_backend.service.PedidoService;
 import com.a3_backend.service.ProdutoService;
@@ -69,13 +69,13 @@ public class EmpresaController {
 
     @GetMapping("/produto/mais-vendidos/{id}")
     @Operation(summary = "Retorna os produtos mais vendidos pela Id da empresa", description = "Retorna todos os pedidos")
-    public List<ProdutoMaisVendidoResponse> getProdutoMaisVendido(@PathVariable Long id) {
+    public TADListaEncadeada<ProdutoMaisVendidoResponse> getProdutoMaisVendido(@PathVariable Long id) {
         return pedidoService.getProdutosMaisVendidos(id);
     }
 
     @GetMapping("/produto/pedidos-estoque/{id}")
     @Operation(summary = "Retorna os produtos mais vendidos pela Id da empresa", description = "Retorna todos os pedidos")
-    public  List<PedidoResponse> getAllEstoquesByEmpresaId(@PathVariable Long id) {
+    public TADListaEncadeada<PedidoResponse> getAllEstoquesByEmpresaId(@PathVariable Long id) {
         return produtoService.getAllEstoquesByEmpresaId(id);
     }
 }

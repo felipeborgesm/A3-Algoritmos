@@ -1,9 +1,7 @@
 package com.a3_backend.dto;
 
-import com.a3_backend.TAD.ListaEncadeada;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
 
 @Getter
 @Setter

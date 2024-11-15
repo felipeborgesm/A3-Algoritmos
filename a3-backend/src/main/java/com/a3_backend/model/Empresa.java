@@ -1,22 +1,16 @@
 package com.a3_backend.model;
 
-//import com.a3_backend.TAD.ListaEncadeada;
-//import com.a3_backend.TAD.ListaEncadeadaType;
-//import org.hibernate.annotations.CollectionType;
 import com.a3_backend.dto.CreateEmpresaRequest;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "empresa")
@@ -63,8 +57,3 @@ public class Empresa {
         this.cnpj = empresaRequest.getCnpj();
     };
 }
-
-
-//    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL)
-//    @CollectionType(type = ListaEncadeadaType.class)
-//    private ListaEncadeada<Usuario> funcionarios;

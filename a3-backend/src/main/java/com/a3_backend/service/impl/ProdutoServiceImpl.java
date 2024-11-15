@@ -1,5 +1,7 @@
 package com.a3_backend.service.impl;
 
+import com.a3_backend.TAD.TADFilaEncadeada;
+import com.a3_backend.TAD.TADListaEncadeada;
 import com.a3_backend.dto.*;
 import com.a3_backend.model.Pedido;
 import com.a3_backend.model.Produto;
@@ -23,7 +25,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Autowired
     PedidoRepository pedidoRepository;
 
-    final Queue<Pedido> filaPedidos = new LinkedList<>();
+    final TADFilaEncadeada<Pedido> filaPedidos = new TADFilaEncadeada<>();
 
     @Override
     public void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
@@ -42,8 +44,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 
             Pedido pedido = pedidoServiceImpl.create(createPedidoRequest, produto);
 
-            if (!filaPedidos.isEmpty()) {
-                Pedido primeiroPedido = filaPedidos.peek();
+            if (!filaPedidos.estaVazia()) {
+                Pedido primeiroPedido = filaPedidos.primeiro();
 
                 if (primeiroPedido != null && primeiroPedido.getQuantidade() <= produto.getQuantidade()) {
                     produto.setQuantidade(produto.getQuantidade() + primeiroPedido.getQuantidade());
@@ -56,7 +58,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 
                     Pedido pedido2 = pedidoServiceImpl.create(createPedidoRequest2, produto);
 
-                    filaPedidos.poll();
+                    filaPedidos.desenfileirar();
                 }
             }
             if (produto.getQuantidade() > 0) {
@@ -69,7 +71,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             createPedidoRequest.setIsPedidoFinalizado(false);
 
             Pedido pedido = pedidoServiceImpl.create(createPedidoRequest, produto);
-            filaPedidos.offer(pedido);
+            filaPedidos.enfileirar(pedido);
             produto.setIsProductInEstoque(false);
 
         } else {
@@ -117,8 +119,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public List<PedidoResponse> getAllEstoquesByEmpresaId(Long empresaId) {
-        List<PedidoResponse> formattedProdutos = new ArrayList<>();
+    public TADListaEncadeada<PedidoResponse> getAllEstoquesByEmpresaId(Long empresaId) {
+        TADListaEncadeada<PedidoResponse> formattedProdutos = new TADListaEncadeada<>();
 
         for (Pedido pedido : filaPedidos) {
             if (Objects.equals(pedido.getProduto().getEmpresa().getId(), empresaId)) {
