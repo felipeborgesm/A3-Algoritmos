@@ -75,17 +75,6 @@ public class TADListaEncadeada<T> implements Iterable<T> {
         return false;
     }
 
-    public boolean contains(Object o) {
-        No<T> atual = inicio;
-        while (atual != null) {
-            if (atual.dado.equals(o)) {
-                return true;
-            }
-            atual = atual.proximo;
-        }
-        return false;
-    }
-
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             private No<T> atual = inicio;
@@ -108,7 +97,6 @@ public class TADListaEncadeada<T> implements Iterable<T> {
         };
     }
 
-    // Método para serialização JSON
     public Object[] getItens() {
         return toArray();
     }

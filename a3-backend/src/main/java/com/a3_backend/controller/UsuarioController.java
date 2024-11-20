@@ -28,8 +28,4 @@ public class UsuarioController {
         return usuarioService.getById(id);
     }
 
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "Hello, World!";
-    }
 }
