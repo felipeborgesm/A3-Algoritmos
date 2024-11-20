@@ -25,7 +25,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Autowired
     PedidoRepository pedidoRepository;
 
-    final TADFilaEncadeada<Pedido> filaPedidos = new TADFilaEncadeada<>();
+    public TADFilaEncadeada<Pedido> filaPedidos = new TADFilaEncadeada<>();
 
     @Override
     public void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
@@ -35,7 +35,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         }
         CreatePedidoRequest createPedidoRequest = new CreatePedidoRequest();
 
-        if (produto.getQuantidade() == 10 && tradeProdutoRequest.getQuantidade() > 0) {
+        if (tradeProdutoRequest.getQuantidade() > 0) {
             produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
 
             createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
@@ -59,6 +59,7 @@ public class ProdutoServiceImpl implements ProdutoService {
                     Pedido pedido2 = pedidoServiceImpl.create(createPedidoRequest2, produto);
 
                     filaPedidos.desenfileirar();
+                    System.out.println(filaPedidos);
                 }
             }
             if (produto.getQuantidade() > 0) {

@@ -15,11 +15,13 @@ public class AllProductsResponse {
     private String nome;
     private BigDecimal valorUnitario;
     private Integer quantidade;
+    private Boolean isProdutoInEstoque;
 
     public AllProductsResponse(Produto produto) {
         this.codigo = produto.getCodigo();
         this.nome = produto.getNome();
         this.valorUnitario = produto.getValorUnitario();
         this.quantidade = produto.getQuantidade();
+        this.isProdutoInEstoque = produto.getIsProductInEstoque();
     }
 }

@@ -17,12 +17,10 @@ public class UsuarioResponse {
     private String login;
     private String dataCriacao;
     private String dataAtualizacao;
-    private String empresa;
 
     public UsuarioResponse(Usuario usuario) {
         this.nome = usuario.getNome();
         this.login = usuario.getLogin();
-        this.empresa = usuario.getEmpresa().getNome();
         this.dataCriacao = formatarData(usuario.getDataCriacao());
         this.dataAtualizacao = formatarData(usuario.getDataAtualizacao());
     }
