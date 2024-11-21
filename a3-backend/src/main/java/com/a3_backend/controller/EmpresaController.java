@@ -32,7 +32,6 @@ public class EmpresaController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Retorna os dados do usuário de acordo o Id", description = "Retorna os dados do usuário")
     public EmpresaResponse getById(@PathVariable Long id) {
         return empresaService.getById(id);
     }
@@ -46,7 +45,6 @@ public class EmpresaController {
     public void addProduto(@PathVariable Long id, @RequestBody CreateProdutoRequest produtoRequest) { produtoService.create(produtoRequest, id); }
 
     @GetMapping("/produtos/{id}")
-    @Operation(summary = "Retorna os dados do usuário de acordo o Id", description = "Retorna os dados do usuário")
     public List<AllProductsResponse> getAllProdutos(@PathVariable Long id) {
         return produtoService.getAllByEmpresaId(id);
     }
