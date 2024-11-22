@@ -2,6 +2,8 @@ FROM openjdk:17-jdk-alpine
 
 WORKDIR /app
 
+RUN mkdir -p /app/database && chmod 777 /app/database
+
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 RUN ./mvnw dependency:go-offline
