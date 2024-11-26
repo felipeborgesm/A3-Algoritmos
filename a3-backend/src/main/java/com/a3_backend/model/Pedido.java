@@ -28,17 +28,17 @@ public class Pedido {
     @Column(name = "quantidade")
     private Integer quantidade;
 
-    @Column(name = "valorTotal")
+    @Column(name = "valor_total")
     private BigDecimal valorTotal;
 
-    @Column(name = "isPedidoFinalizado")
+    @Column(name = "is_pedido_finalizado")
     private Boolean isPedidoFinalizado;
 
-    @Column(name = "dataCriacao")
+    @Column(name = "data_criacao")
     @CreatedDate
     private LocalDateTime dataCriacao;
 
-    @Column(name = "dataAtualizacao")
+    @Column(name = "data_atualizacao")
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 

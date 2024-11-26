@@ -59,7 +59,6 @@ public class ProdutoServiceImpl implements ProdutoService {
                     Pedido pedido2 = pedidoServiceImpl.create(createPedidoRequest2, produto);
 
                     filaPedidos.desenfileirar();
-                    System.out.println(filaPedidos);
                 }
             }
             if (produto.getQuantidade() > 0) {

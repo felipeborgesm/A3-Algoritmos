@@ -34,20 +34,20 @@ public class Produto {
     @Column(name = "quantidade", nullable = false)
     private Integer quantidade;
 
-    @Column(name = "isProductInEstoque", nullable = false)
+    @Column(name = "is_produto_em_estoque", nullable = false)
     private Boolean isProductInEstoque;
 
-    @Column(name = "isPerecivel", nullable = false)
+    @Column(name = "is_perecivel", nullable = false)
     private Boolean isPerecivel;
 
-    @Column(name = "valorUnitario", nullable = false)
+    @Column(name = "valor_unitario", nullable = false)
     private BigDecimal valorUnitario;
 
-    @Column(name = "dataCriacao")
+    @Column(name = "data_criacao")
     @CreatedDate
     private LocalDateTime dataCriacao;
 
-    @Column(name = "dataAtualizacao")
+    @Column(name = "data_atualizacao")
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 

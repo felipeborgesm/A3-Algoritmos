@@ -31,11 +31,11 @@ public class Empresa {
     @Column(name = "cnpj", nullable = false, unique = true)
     private String cnpj;
 
-    @Column(name = "dataCriacao")
+    @Column(name = "data_criacao")
     @CreatedDate
     private LocalDateTime dataCriacao;
 
-    @Column(name = "dataAtualizacao")
+    @Column(name = "data_atualizacao")
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 

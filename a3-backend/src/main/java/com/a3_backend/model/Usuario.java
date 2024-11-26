@@ -33,11 +33,11 @@ public class Usuario {
     @Column(name = "senha", nullable = false)
     private String senha;
 
-    @Column(name = "dataCriacao")
+    @Column(name = "data_criacao")
     @CreatedDate
     private LocalDateTime dataCriacao;
 
-    @Column(name = "dataAtualizacao")
+    @Column(name = "data_atualizacao")
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
