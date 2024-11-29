@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PedidoService {
     Pedido create(CreatePedidoRequest createPedidoRequest, Produto produto);
-    List<PedidoResponse> getAllByProdutoCodigo(Integer codigo);
-    List<PedidoResponse> getAllByEmpresaId(Long empresaId);
+    TADListaEncadeada<PedidoResponse> getAllByProdutoCodigo(Integer codigo);
+    TADListaEncadeada<PedidoResponse> getAllByEmpresaId(Long empresaId);
     TADListaEncadeada<ProdutoMaisVendidoResponse> getProdutosMaisVendidos(Long empresaId);
 }

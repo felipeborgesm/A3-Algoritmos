@@ -95,10 +95,10 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public List<AllProductsResponse> getAllByEmpresaId(Long empresaId) {
+    public TADListaEncadeada<AllProductsResponse> getAllByEmpresaId(Long empresaId) {
         List<Produto> produtos = produtoRepository.getAllByEmpresaId(empresaId);
 
-        List<AllProductsResponse> formattedProdutos = new ArrayList<>();
+        TADListaEncadeada<AllProductsResponse> formattedProdutos = new TADListaEncadeada<>();
         produtos.forEach(item -> formattedProdutos.add(new AllProductsResponse(item)));
 
         return formattedProdutos;

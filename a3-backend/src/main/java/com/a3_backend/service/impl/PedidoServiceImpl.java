@@ -28,20 +28,20 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public List<PedidoResponse> getAllByProdutoCodigo(Integer codigo) {
+    public TADListaEncadeada<PedidoResponse> getAllByProdutoCodigo(Integer codigo) {
         var listaPedidos = pedidoRepository.getAllByProdutoCodigo(codigo);
 
-        List<PedidoResponse> pedidoResponse = new ArrayList<>();
+        TADListaEncadeada<PedidoResponse> pedidoResponse = new TADListaEncadeada<>();
         listaPedidos.forEach(item -> pedidoResponse.add(new PedidoResponse(item)));
 
         return pedidoResponse;
     }
 
     @Override
-    public List<PedidoResponse> getAllByEmpresaId(Long empresaId) {
+    public TADListaEncadeada<PedidoResponse> getAllByEmpresaId(Long empresaId) {
         var listaPedidos = pedidoRepository.getAllByEmpresaId(empresaId);
 
-        List<PedidoResponse> pedidoResponse = new ArrayList<>();
+        TADListaEncadeada<PedidoResponse> pedidoResponse = new TADListaEncadeada<>();
         listaPedidos.forEach(item -> pedidoResponse.add(new PedidoResponse(item)));
 
         return pedidoResponse;

@@ -45,7 +45,7 @@ public class EmpresaController {
     public void addProduto(@PathVariable Long id, @RequestBody CreateProdutoRequest produtoRequest) { produtoService.create(produtoRequest, id); }
 
     @GetMapping("/produtos/{id}")
-    public List<AllProductsResponse> getAllProdutos(@PathVariable Long id) {
+    public TADListaEncadeada<AllProductsResponse> getAllProdutos(@PathVariable Long id) {
         return produtoService.getAllByEmpresaId(id);
     }
 
@@ -55,13 +55,13 @@ public class EmpresaController {
 
     @GetMapping("/produto/pedidos/{codigo}")
     @Operation(summary = "Retorna todos os pedidos pelo Codigo do produto", description = "Retorna todos os pedidos")
-    public List<PedidoResponse> getAllProdutoPedidos(@PathVariable Integer codigo) {
+    public TADListaEncadeada<PedidoResponse> getAllProdutoPedidos(@PathVariable Integer codigo) {
         return pedidoService.getAllByProdutoCodigo(codigo);
     }
 
     @GetMapping("/pedidos/{id}")
     @Operation(summary = "Retorna todos os pedidos da empresa pelo Id da empresa", description = "Retorna todos os pedidos")
-    public List<PedidoResponse> getAllPedidos(@PathVariable Long id) {
+    public TADListaEncadeada<PedidoResponse> getAllPedidos(@PathVariable Long id) {
         return pedidoService.getAllByEmpresaId(id);
     }
 
