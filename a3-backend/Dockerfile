@@ -5,8 +5,8 @@ WORKDIR /app
 # Adicionar usuário não-root
 RUN addgroup -S spring && adduser -S spring -G spring
 
-# Instalar dependências necessárias
-RUN apk add --no-cache bash
+# Instalar dependências necessárias, incluindo dos2unix para tratar line endings
+RUN apk add --no-cache bash dos2unix
 
 # Criar diretório do banco de dados e ajustar permissões
 RUN mkdir -p /app/database && \
@@ -16,7 +16,11 @@ RUN mkdir -p /app/database && \
 # Copiar arquivos do projeto
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
-RUN chmod +x mvnw && \
+
+# Corrigir line endings e permissões explicitamente
+RUN dos2unix mvnw && \
+    chmod +x mvnw && \
+    ls -la && \
     ./mvnw dependency:go-offline
 
 COPY src ./src

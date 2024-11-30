@@ -122,14 +122,22 @@ public class ProdutoServiceImpl implements ProdutoService {
     public TADListaEncadeada<PedidoResponse> getAllEstoquesByEmpresaId(Long empresaId) {
         TADListaEncadeada<PedidoResponse> formattedProdutos = new TADListaEncadeada<>();
 
-        for (Pedido pedido : filaPedidos) {
-            if (Objects.equals(pedido.getProduto().getEmpresa().getId(), empresaId)) {
-                formattedProdutos.add(new PedidoResponse(pedido));
+        if (filaPedidos.estaVazia()) {
+            List<Pedido> dadosPedidos = pedidoRepository.getAllByEmpresaId(empresaId);
+            for (Pedido pedido : dadosPedidos) {
+                if (!pedido.getIsPedidoFinalizado()) {
+                    formattedProdutos.add(new PedidoResponse(pedido));
+                }
+            }
+        } else {
+            for (Pedido pedido : filaPedidos) {
+                if (Objects.equals(pedido.getProduto().getEmpresa().getId(), empresaId)) {
+                    formattedProdutos.add(new PedidoResponse(pedido));
+                }
             }
         }
         return formattedProdutos;
     }
-
 
     private Integer gerarNumeroUnico() {
         Random random = new Random();

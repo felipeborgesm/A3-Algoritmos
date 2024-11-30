@@ -1,15 +1,262 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sistema Completo</title>
+    <style>
+        /* Estilo Geral */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+            /* Fundo azul */
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+        }
+
+        header nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 120px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: left;
+        }
+
+        input {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: 400px;
+            /* Aumentar gráfico */
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            font-size: 1.2rem;
+        }
+
+        ul li {
+            background-color: #f9f9f9;
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ul li button {
+            background-color: #dc3545;
+            font-size: 1rem;
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        ul li button:hover {
+            background-color: #a71d2a;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-    <h3>teste h3</h3>
-    <button>save</button>
+    <header>
+        <nav>
+            <a id="link-login">Login</a>
+            <a id="link-charts">Gráficos</a>
+            <a id="link-products">Produtos</a>
+        </nav>
+    </header>
+
+    <!-- Login Section -->
+    <div id="section-login" class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" placeholder="Digite seu usuário" required>
+
+            <label for="password">Senha:</label>
+            <input type="password" id="password" placeholder="Digite sua senha" required>
+
+            <button type="submit">Entrar</button>
+        </form>
+        <div id="loginMessage"></div>
+    </div>
+
+    <!-- Charts Section -->
+    <div id="section-charts" class="container hidden">
+        <h1>Gráfico de Colunas</h1>
+        <canvas id="barChart"></canvas>
+    </div>
+
+    <!-- Products Section -->
+    <div id="section-products" class="container hidden">
+        <h1>Lista de Produtos</h1>
+        <ul id="productList"></ul>
+        <div class="add-product">
+            <h2>Adicionar Produto</h2>
+            <input type="text" id="productName" placeholder="Nome do Produto"
+                style="width: 100%; font-size: 1.2rem; padding: 10px;">
+            <button id="addProductButton">Adicionar</button>
+        </div>
+    </div>
+
+    <script>
+        // Navegação
+        const sections = {
+            login: document.getElementById('section-login'),
+            charts: document.getElementById('section-charts'),
+            products: document.getElementById('section-products'),
+        };
+
+        const links = {
+            login: document.getElementById('link-login'),
+            charts: document.getElementById('link-charts'),
+            products: document.getElementById('link-products'),
+        };
+
+        function showSection(section) {
+            Object.values(sections).forEach(sec => sec.classList.add('hidden'));
+            sections[section].classList.remove('hidden');
+        }
+
+        links.login.addEventListener('click', () => showSection('login'));
+        links.charts.addEventListener('click', () => showSection('charts'));
+        links.products.addEventListener('click', () => showSection('products'));
+
+        // Login funcionalidade
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('loginMessage');
+
+            if (username === "admin" && password === "1234") {
+                message.style.color = "green";
+                message.textContent = "Login realizado com sucesso!";
+            } else {
+                message.style.color = "red";
+                message.textContent = "UsuÃ¡rio ou senha incorretos!";
+            }
+        });
+
+        // Gráficos
+        const ctx = document.getElementById('barChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Produto A', 'Produto B', 'Produto C', 'Produto D', 'Produto E'],
+                datasets: [{
+                    label: 'Vendas em Milhares',
+                    data: [12, 19, 3, 5, 2],
+                    backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+
+        // Produtos
+        const productList = document.getElementById('productList');
+        const productNameInput = document.getElementById('productName');
+        const addProductButton = document.getElementById('addProductButton');
+
+        addProductButton.addEventListener('click', () => {
+            const productName = productNameInput.value.trim();
+
+            if (productName) {
+                const li = document.createElement('li');
+                li.textContent = productName;
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = "Remover";
+                removeButton.style.marginLeft = "10px";
+                removeButton.addEventListener('click', () => li.remove());
+                li.appendChild(removeButton);
+
+                productList.appendChild(li);
+                productNameInput.value = '';
+            } else {
+                alert("Digite o nome do produto.");
+            }
+        });
+    </script>
 </body>
 
 </html>

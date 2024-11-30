@@ -1,6 +1,5 @@
 package com.a3_backend.security;
 
-
 import com.a3_backend.model.Usuario;
 import com.a3_backend.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
@@ -13,7 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.Collections;
 

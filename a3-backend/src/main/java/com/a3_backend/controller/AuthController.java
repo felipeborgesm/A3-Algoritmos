@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Optional;
 
 @RestController
@@ -36,7 +35,7 @@ public class AuthController {
         Usuario user = this.repository.findByLogin(body.getLogin()).orElseThrow(() -> new RuntimeException("User not found"));
         if(passwordEncoder.matches(body.getSenha(), user.getSenha())) {
             String token = this.tokenService.generateToken(user);
-            return ResponseEntity.ok(new LoginUsuarioResponse(user.getNome(), token));
+            return ResponseEntity.ok(new LoginUsuarioResponse(user.getNome(), token, user.getId()));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -54,7 +53,7 @@ public class AuthController {
             this.repository.save(newUser);
 
             String token = this.tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new LoginUsuarioResponse(newUser.getNome(), token));
+            return ResponseEntity.ok(new LoginUsuarioResponse(newUser.getNome(), token, newUser.getId()));
         }
         return ResponseEntity.badRequest().build();
     }

@@ -36,11 +36,11 @@ public class EmpresaController {
         return empresaService.getById(id);
     }
 
-    @PutMapping("/funcionarios/{id}")
+    @PostMapping("/funcionarios/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public void addFuncionarios(@PathVariable Long id, @RequestBody AddFuncionariosRequest funcionariosId) { empresaService.addFuncionarios(funcionariosId, id); }
 
-    @PutMapping("/produto/{id}")
+    @PostMapping("/produto/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public void addProduto(@PathVariable Long id, @RequestBody CreateProdutoRequest produtoRequest) { produtoService.create(produtoRequest, id); }
 
@@ -49,7 +49,7 @@ public class EmpresaController {
         return produtoService.getAllByEmpresaId(id);
     }
 
-    @PutMapping("/produto/pedido/{id}")
+    @PostMapping("/produto/pedido/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public void compraVendaProduto(@PathVariable Long id, @RequestBody TradeProdutoRequest tradeRequest) { produtoService.tradeProduto(tradeRequest, id); }
 
