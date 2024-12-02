@@ -38,11 +38,11 @@ public class EmpresaController {
 
     @PostMapping("/funcionarios/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addFuncionarios(@PathVariable Long id, @RequestBody AddFuncionariosRequest funcionariosId) { empresaService.addFuncionarios(funcionariosId, id); }
+    public TextoResponse addFuncionarios(@PathVariable Long id, @RequestBody AddFuncionariosRequest funcionariosId) { return empresaService.addFuncionarios(funcionariosId, id); }
 
     @PostMapping("/produto/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addProduto(@PathVariable Long id, @RequestBody CreateProdutoRequest produtoRequest) { produtoService.create(produtoRequest, id); }
+    public CreateProdutoResponse addProduto(@PathVariable Long id, @RequestBody CreateProdutoRequest produtoRequest) { return produtoService.create(produtoRequest, id); }
 
     @GetMapping("/produtos/{id}")
     public TADListaEncadeada<AllProductsResponse> getAllProdutos(@PathVariable Long id) {
@@ -51,7 +51,7 @@ public class EmpresaController {
 
     @PostMapping("/produto/pedido/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void compraVendaProduto(@PathVariable Long id, @RequestBody TradeProdutoRequest tradeRequest) { produtoService.tradeProduto(tradeRequest, id); }
+    public TextoResponse compraVendaProduto(@PathVariable Long id, @RequestBody TradeProdutoRequest tradeRequest) { return produtoService.tradeProduto(tradeRequest, id); }
 
     @GetMapping("/produto/pedidos/{codigo}")
     @Operation(summary = "Retorna todos os pedidos pelo Codigo do produto", description = "Retorna todos os pedidos")

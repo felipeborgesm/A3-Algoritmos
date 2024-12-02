@@ -28,7 +28,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     final TADFilaEncadeada<Pedido> filaPedidos = new TADFilaEncadeada<>();
 
     @Override
-    public void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
+    public TextoResponse tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
         Produto produto = produtoRepository.getByCodigo(tradeProdutoRequest.getCodigo());
         if (produto == null) {
             throw new RuntimeException("Produto não encontrado");
@@ -64,6 +64,8 @@ public class ProdutoServiceImpl implements ProdutoService {
             if (produto.getQuantidade() > 0) {
                 produto.setIsProductInEstoque(true);
             }
+
+            return new TextoResponse("Sucesso");
         }
         else if (produto.getQuantidade() + tradeProdutoRequest.getQuantidade() < 10) {
             createPedidoRequest.setValorTotal(produto.getValorUnitario().multiply(BigDecimal.valueOf(tradeProdutoRequest.getQuantidade())));
@@ -74,6 +76,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             filaPedidos.enfileirar(pedido);
             produto.setIsProductInEstoque(false);
 
+            return new TextoResponse("Pedido fora de estoque");
         } else {
             produto.setQuantidade(produto.getQuantidade() + tradeProdutoRequest.getQuantidade());
 
@@ -85,6 +88,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             if (produto.getQuantidade() <= 0) {
                 produto.setIsProductInEstoque(false);
             }
+            return new TextoResponse("Sucesso");
         }
     }
 
@@ -105,7 +109,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public void create(CreateProdutoRequest produtoRequest, Long empresaId) {
+    public CreateProdutoResponse create(CreateProdutoRequest produtoRequest, Long empresaId) {
         Produto produto = new Produto(produtoRequest);
         var empresa = empresaRepository.findById(empresaId).orElseThrow();
 
@@ -116,6 +120,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 
         empresa.getProdutos().add(produto);
         empresaRepository.save(empresa);
+
+        return new CreateProdutoResponse(produto);
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.List;
 public interface ProdutoService {
     ProdutoResponse getByCodigo(Integer id);
     TADListaEncadeada<AllProductsResponse> getAllByEmpresaId(Long empresaId);
-    void create(CreateProdutoRequest produtoRequest, Long empresaId);
-    void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId);
+    CreateProdutoResponse create(CreateProdutoRequest produtoRequest, Long empresaId);
+    TextoResponse tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId);
     TADListaEncadeada<PedidoResponse> getAllEstoquesByEmpresaId(Long empresaId);
 }

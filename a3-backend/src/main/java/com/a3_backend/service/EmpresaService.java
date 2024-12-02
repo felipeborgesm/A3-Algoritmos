@@ -5,5 +5,5 @@ import com.a3_backend.dto.*;
 public interface EmpresaService {
     EmpresaResponse getById(Long id);
     CreateEntityResponse create(CreateEmpresaRequest empresaRequest, Long id);
-    void addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId);
+    TextoResponse addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId);
 }

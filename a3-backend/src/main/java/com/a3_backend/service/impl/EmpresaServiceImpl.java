@@ -1,9 +1,6 @@
 package com.a3_backend.service.impl;
 
-import com.a3_backend.dto.AddFuncionariosRequest;
-import com.a3_backend.dto.CreateEmpresaRequest;
-import com.a3_backend.dto.CreateEntityResponse;
-import com.a3_backend.dto.EmpresaResponse;
+import com.a3_backend.dto.*;
 import com.a3_backend.model.Empresa;
 import com.a3_backend.model.Usuario;
 import com.a3_backend.repository.EmpresaRepository;
@@ -44,7 +41,7 @@ public class EmpresaServiceImpl implements EmpresaService {
     }
 
     @Override
-    public void addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId) {
+    public TextoResponse addFuncionarios(AddFuncionariosRequest funcionariosId, Long empresaId) {
         Empresa empresa = empresaRepository.findById(empresaId).orElseThrow();
 
         List<Usuario> funcionarios = new ArrayList<>();
@@ -57,5 +54,7 @@ public class EmpresaServiceImpl implements EmpresaService {
         }
         empresa.getFuncionarios().addAll(funcionarios);
         empresaRepository.save(empresa);
+
+        return new TextoResponse("Sucesso");
     }
 }
