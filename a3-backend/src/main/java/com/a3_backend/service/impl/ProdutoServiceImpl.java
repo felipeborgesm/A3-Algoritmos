@@ -25,7 +25,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Autowired
     PedidoRepository pedidoRepository;
 
-    public TADFilaEncadeada<Pedido> filaPedidos = new TADFilaEncadeada<>();
+    final TADFilaEncadeada<Pedido> filaPedidos = new TADFilaEncadeada<>();
 
     @Override
     public void tradeProduto(TradeProdutoRequest tradeProdutoRequest, Long empresaId) {
@@ -44,7 +44,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 
             Pedido pedido = pedidoServiceImpl.create(createPedidoRequest, produto);
 
-            if (!filaPedidos.estaVazia()) {
+            do {
                 Pedido primeiroPedido = filaPedidos.primeiro();
 
                 if (primeiroPedido != null && primeiroPedido.getQuantidade() <= produto.getQuantidade()) {
@@ -59,8 +59,8 @@ public class ProdutoServiceImpl implements ProdutoService {
                     Pedido pedido2 = pedidoServiceImpl.create(createPedidoRequest2, produto);
 
                     filaPedidos.desenfileirar();
-                }
-            }
+                } else { break; }
+            } while (!filaPedidos.estaVazia());
             if (produto.getQuantidade() > 0) {
                 produto.setIsProductInEstoque(true);
             }
@@ -121,19 +121,9 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public TADListaEncadeada<PedidoResponse> getAllEstoquesByEmpresaId(Long empresaId) {
         TADListaEncadeada<PedidoResponse> formattedProdutos = new TADListaEncadeada<>();
-
-        if (filaPedidos.estaVazia()) {
-            List<Pedido> dadosPedidos = pedidoRepository.getAllByEmpresaId(empresaId);
-            for (Pedido pedido : dadosPedidos) {
-                if (!pedido.getIsPedidoFinalizado()) {
-                    formattedProdutos.add(new PedidoResponse(pedido));
-                }
-            }
-        } else {
-            for (Pedido pedido : filaPedidos) {
-                if (Objects.equals(pedido.getProduto().getEmpresa().getId(), empresaId)) {
-                    formattedProdutos.add(new PedidoResponse(pedido));
-                }
+        for (Pedido pedido : filaPedidos) {
+            if (Objects.equals(pedido.getProduto().getEmpresa().getId(), empresaId)) {
+                formattedProdutos.add(new PedidoResponse(pedido));
             }
         }
         return formattedProdutos;

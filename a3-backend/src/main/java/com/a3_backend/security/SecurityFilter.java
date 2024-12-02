@@ -24,6 +24,10 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("Method: " + request.getMethod());
+        System.out.println("URI: " + request.getRequestURI());
+        System.out.println("Authorization Header: " + request.getHeader("Authorization"));
+
         // Se for uma requisição para endpoints públicos, permite passar
         if (isPublicEndpoint(request)) {
             filterChain.doFilter(request, response);
@@ -40,7 +44,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         var login = tokenService.validateToken(token);
         if (login == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token inválido");
+            response.getWriter().write("Token invalido");
             return;
         }
 
